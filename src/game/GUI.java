@@ -197,6 +197,7 @@ public class GUI  extends Application {
         loseBox.getChildren().addAll(loseImage, fin2Box);
 
         Stage finStage = new Stage();
+        finStage.setTitle("PaperTank");
 
         // Handler classes go here ...
 
