@@ -41,6 +41,7 @@ public class GUI  extends Application {
     public static ArrayList<Defense> defense = new ArrayList<Defense>();
     public static ArrayList<Attack> attack = new ArrayList<Attack>();
 
+
     @Override
     public void start(Stage primaryStage) throws Exception{
 
@@ -84,10 +85,6 @@ public class GUI  extends Application {
         mainPane.getChildren().add(moneyPane);
 
         Scene scene = new Scene (mainPane, width, height);
-        primaryStage.setTitle("PaperTank");
-        primaryStage.setResizable(false);
-        primaryStage.show();
-
 
         // First page GUI goes here ...
 
@@ -98,37 +95,43 @@ public class GUI  extends Application {
         wlcmeBox.setAlignment(Pos.TOP_CENTER);
 
         HBox widthBox = new HBox(10);
-        Label widthLabel = new Label (   "Width:        " );
+        Label widthLabel = new Label (   "Width:" );
+        widthLabel.setMinWidth(100);
         TextField widthField = new TextField ("1000");
         widthBox.getChildren().addAll(widthLabel, widthField);
         widthBox.setAlignment(Pos.TOP_CENTER);
 
         HBox heightBox = new HBox(10);
-        Label heightLabel = new Label (  "Height:       " );
+        Label heightLabel = new Label (  "Height:" );
+        heightLabel.setMinWidth(100);
         TextField heightField = new TextField ("700");
         heightBox.getChildren().addAll(heightLabel, heightField);
         heightBox.setAlignment(Pos.TOP_CENTER);
 
         HBox moneyBox = new HBox(10);
-        Label initMoneyLabel = new Label ("Money ($) :  ");
+        Label initMoneyLabel = new Label ("Money ($) :");
+        initMoneyLabel.setMinWidth(100);
         TextField moneyField = new TextField ("8000");
         moneyBox.getChildren().addAll(initMoneyLabel, moneyField);
         moneyBox.setAlignment(Pos.TOP_CENTER);
 
         HBox fortBox = new HBox(10);
-        Label fortLabel = new Label (    "Fort No :    " );
+        Label fortLabel = new Label (    "Fort No :" );
+        fortLabel.setMinWidth(100);
         TextField fortField = new TextField("5");
         fortBox.getChildren().addAll(fortLabel, fortField);
         fortBox.setAlignment(Pos.TOP_CENTER);
 
         HBox treasuryBox = new HBox(10);
         Label treasuryLabel = new Label ("Treasury No :" );
+        treasuryLabel.setMinWidth(100);
         TextField treasuryField = new TextField("5");
         treasuryBox.getChildren().addAll(treasuryLabel, treasuryField);
         treasuryBox.setAlignment(Pos.TOP_CENTER);
 
         HBox shieldBox = new HBox(10);
         Label shieldLabel = new Label ("Shield No :" );
+        shieldLabel.setMinWidth(100);
         TextField shieldField = new TextField("5");
         shieldBox.getChildren().addAll(shieldLabel, shieldField);
         shieldBox.setAlignment(Pos.TOP_CENTER);
@@ -165,6 +168,9 @@ public class GUI  extends Application {
         mainBox.setMinHeight(300);
         Scene firstScene = new Scene (mainBox);
         primaryStage.setScene(firstScene);
+        primaryStage.setTitle("PaperTank");
+        primaryStage.setResizable(false);
+        primaryStage.show();
 
         // Handler classes go here ...
 
