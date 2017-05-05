@@ -15,6 +15,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -38,44 +40,13 @@ public class GUI  extends Application {
     public static Attack.AttackType itemClicked = null;
     public static ArrayList<Defense> defense = new ArrayList<Defense>();
     public static ArrayList<Attack> attack = new ArrayList<Attack>();
+
     @Override
     public void start(Stage primaryStage) throws Exception{
 
         // Building the Defense ...
-        loop1: for ( int i=0; i<treasuryCnt; i++ ) {
-            int x = ThreadLocalRandom.current().nextInt(0, width/2-60 + 1);
-            int y = ThreadLocalRandom.current().nextInt(width/12, height-width/12 + 1);
-            Defense d = new Defense(x, y, Defense.DefenseType.TREASURY);
-            for ( Defense ex : defense )
-                if (ex.ifIntersects(d)) {
-                    i--;
-                    continue loop1;
-                }
-            defense.add(d);
-        }
-        loop2: for ( int i=0; i<fortCnt; i++ ) {
-            int x = ThreadLocalRandom.current().nextInt(0, width/2-60 + 1);
-            int y = ThreadLocalRandom.current().nextInt(width/12, height-width/12 + 1);
-            Defense d = new Defense(x, y, Defense.DefenseType.FORT);
-            for ( Defense ex : defense )
-                if (ex.ifIntersects(d)) {
-                    i--;
-                    continue loop2;
-                }
-            defense.add(d);
-        }
-        loop3: for ( int i=0; i<shieldCnt; i++ ) {
-            int x = ThreadLocalRandom.current().nextInt(0, width/2-60 + 1);
-            int y = ThreadLocalRandom.current().nextInt(width/12, height-width/12 + 1);
-            Defense d = new Defense(x, y, Defense.DefenseType.SHIELD);
-            for ( Defense ex : defense )
-                if (ex.ifIntersects(d)) {
-                    i--;
-                    continue loop3;
-                }
-            defense.add(d);
-        }
 
+        Defense.Build ( defense, width, height, treasuryCnt, fortCnt, shieldCnt );
 
         // GUI goes here ...
 
@@ -114,7 +85,6 @@ public class GUI  extends Application {
 
         Scene scene = new Scene (mainPane, width, height);
         primaryStage.setTitle("PaperTank");
-        //primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
 
@@ -168,7 +138,8 @@ public class GUI  extends Application {
         btnBox.getChildren().add(btnStart);
         btnBox.setAlignment(Pos.CENTER);
 
-        class bntDoneHandlerClass implements EventHandler<ActionEvent> {
+
+        class bntStartHandlerClass implements EventHandler<ActionEvent> {
             @Override
             public void handle(ActionEvent e) {
                 primaryStage.setScene(scene);
@@ -187,7 +158,7 @@ public class GUI  extends Application {
             }
         }
 
-        btnStart.setOnAction(new bntDoneHandlerClass());
+        btnStart.setOnAction(new bntStartHandlerClass());
 
         mainBox.getChildren().addAll(wlcmeBox, widthBox, heightBox, moneyBox, fortBox, treasuryBox, shieldBox, btnBox);
         mainBox.setMinWidth(300);
@@ -273,6 +244,16 @@ public class GUI  extends Application {
                 if ( money-100 < 0 || fortCnt==0 ) {
                     // todo : end the game ...
                 }
+                if ( fortCnt == 0 ) {
+                    Label fin = new Label ("You Won!");
+                    //fin.setStyle("-fx-text-fill: #20641f -fx-font: 24 arial");
+                    //fin.setStyle("-fx-font: 24 arial");
+                    mainPane.getChildren().add(fin);
+                    fin.setLayoutX(width/2);
+                    fin.setLayoutY(height/2);
+
+
+                }
                 Defense.showItems(defense);
                 for ( Attack me : attack )
                     for ( Defense enemy : defense )
@@ -288,7 +269,7 @@ public class GUI  extends Application {
                                 // todo : removing forts seems not working ... or working? :-?
                                 if ( defense.get(i).getType() == Defense.DefenseType.FORT ) {
                                     defense.get(i).setVal(defense.get(i).getVal()-me.getPower());
-                                    if ( defense.get(i).getVal() < 0 ) {
+                                    if ( defense.get(i).getVal() <= 0 ) {
                                         mainPane.getChildren().remove(defense.get(i).getPane());
                                         defense.remove(i);
                                         fortCnt--;

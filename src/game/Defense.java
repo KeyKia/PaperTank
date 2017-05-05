@@ -95,6 +95,42 @@ public class Defense {
         pane.endExplosion();
     }
 
+    public static void Build ( ArrayList<Defense> defense, int width, int height, int treasuryCnt, int fortCnt, int shieldCnt ) throws FileNotFoundException{
+        loop1: for ( int i=0; i<treasuryCnt; i++ ) {
+            int x = ThreadLocalRandom.current().nextInt(0, width/2-60 + 1);
+            int y = ThreadLocalRandom.current().nextInt(width/12, height-width/12 + 1);
+            Defense d = new Defense(x, y, Defense.DefenseType.TREASURY);
+            for ( Defense ex : defense )
+                if (ex.ifIntersects(d)) {
+                    i--;
+                    continue loop1;
+                }
+            defense.add(d);
+        }
+        loop2: for ( int i=0; i<fortCnt; i++ ) {
+            int x = ThreadLocalRandom.current().nextInt(0, width/2-60 + 1);
+            int y = ThreadLocalRandom.current().nextInt(width/12, height-width/12 + 1);
+            Defense d = new Defense(x, y, Defense.DefenseType.FORT);
+            for ( Defense ex : defense )
+                if (ex.ifIntersects(d)) {
+                    i--;
+                    continue loop2;
+                }
+            defense.add(d);
+        }
+        loop3: for ( int i=0; i<shieldCnt; i++ ) {
+            int x = ThreadLocalRandom.current().nextInt(0, width/2-60 + 1);
+            int y = ThreadLocalRandom.current().nextInt(width/12, height-width/12 + 1);
+            Defense d = new Defense(x, y, Defense.DefenseType.SHIELD);
+            for ( Defense ex : defense )
+                if (ex.ifIntersects(d)) {
+                    i--;
+                    continue loop3;
+                }
+            defense.add(d);
+        }
+    }
+
     public void setX(int x) {
         this.x = x;
         pane.setLayoutX(x);
