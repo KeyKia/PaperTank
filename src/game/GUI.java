@@ -12,6 +12,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
@@ -20,6 +22,7 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
@@ -30,61 +33,18 @@ import static game.ItemOfMenu.ItemOfMenuType.*;
  * Created by kiarash on 4/29/17.
  */
 public class GUI  extends Application {
-    public static int money = 8000;
-    public static int fortCnt = 5;
-    public static int cnt = 0;
-    public static int width = 1000;
-    public static int height = 700;
-    public static int treasuryCnt = 5;
-    public static int shieldCnt = 5;
-    public static Attack.AttackType itemClicked = null;
-    public static ArrayList<Defense> defense = new ArrayList<Defense>();
-    public static ArrayList<Attack> attack = new ArrayList<Attack>();
+    private static int money = 8000;
+    private static int fortCnt = 5;
+    private static int cnt = 0;
+    private static int width = 1000;
+    private static int height = 700;
+    private static int treasuryCnt = 5;
+    private static int shieldCnt = 5;
+    private static Attack.AttackType itemClicked = null;
+    private static ArrayList<Defense> defense = new ArrayList<>();
+    private static ArrayList<Attack> attack = new ArrayList<>();
 
-
-    @Override
-    public void start(Stage primaryStage) throws Exception{
-
-        // Building the Defense ...
-
-        Defense.Build ( defense, width, height, treasuryCnt, fortCnt, shieldCnt );
-
-        // GUI goes here ...
-
-        Pane mainPane = new Pane();
-        for ( Defense d : defense ) mainPane.getChildren().add(d.getPane());
-
-        HBox menu = new HBox(5);
-        ItemOfMenu grenadeItem = new ItemOfMenu(GRENADE, width);
-        ItemOfMenu rpgItem = new ItemOfMenu(RPG, width);
-        ItemOfMenu tankItem = new ItemOfMenu(TANK, width);
-        ItemOfMenu cannonItem = new ItemOfMenu(CANNON, width);
-        ItemOfMenu missileItem = new ItemOfMenu(MISSILE, width);
-        ItemOfMenu bombItem = new ItemOfMenu(BOMB, width);
-        menu.getChildren().addAll(grenadeItem, rpgItem, tankItem, cannonItem, missileItem, bombItem);
-        menu.setLayoutX( (width-(6*width/15+25))/2 );
-        menu.setLayoutY(0);
-        mainPane.getChildren().add(menu);
-
-        Line line = new Line ( width/2, width/12, width/2, height-width/12);
-        mainPane.getChildren().add(line);
-
-        Button btnFire = new Button ("Fire!" );
-        btnFire.setLayoutX(width/2-25);
-        btnFire.setLayoutY(height-width/12+5);
-        mainPane.getChildren().add(btnFire);
-
-        StackPane moneyPane = new StackPane();
-        moneyPane.setStyle("-fx-background-color: #96fde9");
-        Label moneyLabel = new Label(money+"$");
-        moneyLabel.setFont(javafx.scene.text.Font.font(20));
-        moneyPane.setMinWidth(100);
-        moneyPane.setLayoutX(width/2-moneyPane.getMinWidth()/2);
-        moneyPane.setLayoutY(height-width/12+40);
-        moneyPane.getChildren().add(moneyLabel);
-        mainPane.getChildren().add(moneyPane);
-
-        Scene scene = new Scene (mainPane, width, height);
+    private void initiate () {
 
         // First page GUI goes here ...
 
@@ -141,41 +101,107 @@ public class GUI  extends Application {
         btnBox.getChildren().add(btnStart);
         btnBox.setAlignment(Pos.CENTER);
 
+        mainBox.getChildren().addAll(wlcmeBox, widthBox, heightBox, moneyBox, fortBox, treasuryBox, shieldBox, btnBox);
+        mainBox.setMinWidth(300);
+        mainBox.setMinHeight(300);
+        Scene firstScene = new Scene (mainBox);
+
+        Stage getInput = new Stage();
+        getInput.setScene(firstScene);
+        getInput.setTitle("PaperTank");
+        getInput.setResizable(false);
 
         class bntStartHandlerClass implements EventHandler<ActionEvent> {
             @Override
             public void handle(ActionEvent e) {
-                primaryStage.setScene(scene);
-                /*width = Integer.parseInt(widthField.getText());
+                width = Integer.parseInt(widthField.getText());
                 height = Integer.parseInt(heightField.getText());
                 fortCnt = Integer.parseInt(fortField.getText());
                 treasuryCnt = Integer.parseInt(treasuryField.getText());
                 shieldCnt = Integer.parseInt(shieldField.getText());
                 money = Integer.parseInt(moneyField.getText());
-                primaryStage.setWidth(width);
-                primaryStage.setHeight(height);*/
-                Defense.showItems(defense);
-                Timeline delay3 = new Timeline(new KeyFrame(Duration.seconds(3),
-                        event3 ->{ Defense.hideItems(defense); } ));
-                delay3.play();
+                getInput.close();
             }
         }
 
         btnStart.setOnAction(new bntStartHandlerClass());
+        getInput.showAndWait();
+    }
 
-        mainBox.getChildren().addAll(wlcmeBox, widthBox, heightBox, moneyBox, fortBox, treasuryBox, shieldBox, btnBox);
-        mainBox.setMinWidth(300);
-        mainBox.setMinHeight(300);
-        Scene firstScene = new Scene (mainBox);
-        primaryStage.setScene(firstScene);
+    @Override
+    public void start(Stage primaryStage) throws Exception{
+
+        initiate ();
+
+        // Building the Defense ...
+
+        Defense.Build ( defense, width, height, treasuryCnt, fortCnt, shieldCnt );
+
+        // Game GUI goes here ...
+
+        Pane mainPane = new Pane();
+        for ( Defense d : defense ) mainPane.getChildren().add(d.getPane());
+
+        HBox menu = new HBox(5);
+        ItemOfMenu grenadeItem = new ItemOfMenu(GRENADE, width);
+        ItemOfMenu rpgItem = new ItemOfMenu(RPG, width);
+        ItemOfMenu tankItem = new ItemOfMenu(TANK, width);
+        ItemOfMenu cannonItem = new ItemOfMenu(CANNON, width);
+        ItemOfMenu missileItem = new ItemOfMenu(MISSILE, width);
+        ItemOfMenu bombItem = new ItemOfMenu(BOMB, width);
+        menu.getChildren().addAll(grenadeItem, rpgItem, tankItem, cannonItem, missileItem, bombItem);
+        menu.setLayoutX( (width-(6*width/15+25))/2 );
+        menu.setLayoutY(0);
+        mainPane.getChildren().add(menu);
+
+        Line line = new Line ( width/2, width/12, width/2, height-width/12);
+        mainPane.getChildren().add(line);
+
+        Button btnFire = new Button ("Fire!" );
+        btnFire.setLayoutX(width/2-25);
+        btnFire.setLayoutY(height-width/12+5);
+        mainPane.getChildren().add(btnFire);
+
+        StackPane moneyPane = new StackPane();
+        moneyPane.setStyle("-fx-background-color: #96fde9");
+        Label moneyLabel = new Label(money+"$");
+        moneyLabel.setFont(javafx.scene.text.Font.font(20));
+        moneyPane.setMinWidth(100);
+        moneyPane.setLayoutX(width/2-moneyPane.getMinWidth()/2);
+        moneyPane.setLayoutY(height-width/12+40);
+        moneyPane.getChildren().add(moneyLabel);
+        mainPane.getChildren().add(moneyPane);
+
+        Scene scene = new Scene (mainPane, width, height);
+        primaryStage.setScene(scene);
         primaryStage.setTitle("PaperTank");
         primaryStage.setResizable(false);
         primaryStage.show();
 
+        VBox winBox = new VBox();
+        Label fin1 = new Label ("You Scored " + money + " !!");
+        fin1.setStyle("-fx-text-fill: #20641f");
+        fin1.setFont(Font.font(30));
+        HBox fin1Box = new HBox(fin1);
+        fin1Box.setAlignment(Pos.CENTER);
+        ImageView winImage = new ImageView(new Image(new FileInputStream( "src/game/icons/Win/1.jpg")));
+        winBox.getChildren().addAll(winImage, fin1Box);
+
+        VBox loseBox = new VBox();
+        Label fin2 = new Label ("You Scored " + money + " !!");
+        fin2.setStyle("-fx-text-fill: #FF0000");
+        fin2.setFont(Font.font(30));
+        HBox fin2Box = new HBox(fin2);
+        fin2Box.setAlignment(Pos.CENTER);
+        ImageView loseImage = new ImageView(new Image(new FileInputStream( "src/game/icons/Lose/1.png")));
+        loseBox.getChildren().addAll(loseImage, fin2Box);
+
+        Stage finStage = new Stage();
+
         // Handler classes go here ...
 
         Timeline delay1 = new Timeline(new KeyFrame(Duration.seconds(3),
-                event2 ->{ Defense.hideItems(defense); } ));
+                event2 -> Defense.hideItems(defense)));
         delay1.play();
 
         class mainPaneHandlerClass implements EventHandler<MouseEvent> {
@@ -199,6 +225,7 @@ public class GUI  extends Application {
                 } catch (FileNotFoundException e1) {
                     e1.printStackTrace();
                 }
+                assert tmp != null;
                 if ( money - tmp.getCost() < 0 ) {
                     System.out.println("Insufficient money");
                     return;
@@ -229,7 +256,7 @@ public class GUI  extends Application {
         class itemHandlerClass implements EventHandler<MouseEvent> {
             private Attack.AttackType type;
             private ItemOfMenu item;
-            public itemHandlerClass ( Attack.AttackType type, ItemOfMenu item ) {
+            private itemHandlerClass(Attack.AttackType type, ItemOfMenu item) {
                 this.type = type;
                 this.item = item;
             }
@@ -247,19 +274,6 @@ public class GUI  extends Application {
             public void handle(ActionEvent e) {
                 System.out.println("Fire clicked");
                 cnt++;
-                if ( money-100 < 0 || fortCnt==0 ) {
-                    // todo : end the game ...
-                }
-                if ( fortCnt == 0 ) {
-                    Label fin = new Label ("You Won!");
-                    //fin.setStyle("-fx-text-fill: #20641f -fx-font: 24 arial");
-                    //fin.setStyle("-fx-font: 24 arial");
-                    mainPane.getChildren().add(fin);
-                    fin.setLayoutX(width/2);
-                    fin.setLayoutY(height/2);
-
-
-                }
                 Defense.showItems(defense);
                 for ( Attack me : attack )
                     for ( Defense enemy : defense )
@@ -295,13 +309,26 @@ public class GUI  extends Application {
                     attack.clear();
                     if ( cnt%3 == 0 )
                         Defense.shuffle(defense, width, height);
+                    if ( fortCnt == 0 || money-100 < 0 ) {
+                        if ( fortCnt == 0 ) {
+                            fin1.setText("You Scored " + money + " !!");
+                            Scene finScene = new Scene(winBox);
+                            finStage.setScene(finScene);
+                        }
+                        else {
+                            fin2.setText("You Scored " + money + " !!");
+                            Scene finScene = new Scene(loseBox);
+                            finStage.setScene(finScene);
+                        }
+                        primaryStage.close();
+                        finStage.show();
+                    }
                     // show defense for 3 seconds ...
                     Timeline delay1 = new Timeline(new KeyFrame(Duration.seconds(3),
-                            event2 ->{ Defense.hideItems(defense); } ));
+                            event2 -> Defense.hideItems(defense)));
                     delay1.play();
                 } ));
                 delay2.play();
-
             }
         }
 
