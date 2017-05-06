@@ -157,9 +157,12 @@ public class GUI  extends Application {
         Line line = new Line ( width/2, width/12, width/2, height-width/12);
         mainPane.getChildren().add(line);
 
-        Button btnFire = new Button ("Fire!" );
+        Button btnFire = new Button ("        ");
         btnFire.setLayoutX(width/2-25);
         btnFire.setLayoutY(height-width/12+5);
+        BackgroundImage unClickedImage = new BackgroundImage(new Image(new FileInputStream( "src/game/icons/Fire/1.png")),BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
+        BackgroundImage clickedImage = new BackgroundImage(new Image(new FileInputStream( "src/game/icons/Fire/2.png")),BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
+        btnFire.setBackground(new Background(unClickedImage));
         mainPane.getChildren().add(btnFire);
 
         StackPane moneyPane = new StackPane();
@@ -273,6 +276,7 @@ public class GUI  extends Application {
         class btnFireHandlerClass implements EventHandler<ActionEvent> {
             @Override
             public void handle(ActionEvent e) {
+                btnFire.setBackground(new Background(clickedImage));
                 System.out.println("Fire clicked");
                 cnt++;
                 Defense.showItems(defense);
@@ -326,7 +330,9 @@ public class GUI  extends Application {
                     }
                     // show defense for 3 seconds ...
                     Timeline delay1 = new Timeline(new KeyFrame(Duration.seconds(3),
-                            event2 -> Defense.hideItems(defense)));
+                            event2 -> { Defense.hideItems(defense);
+                                btnFire.setBackground(new Background(unClickedImage));
+                                        }));
                     delay1.play();
                 } ));
                 delay2.play();
